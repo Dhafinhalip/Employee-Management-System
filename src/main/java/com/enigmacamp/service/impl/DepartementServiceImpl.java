@@ -72,7 +72,7 @@ public class DepartementServiceImpl implements DepartementService {
 
     }
 
-    protected void validateDepartment (Department department) {
+    public void validateDepartment(Department department) {
         if (department == null) {
             throw new IllegalArgumentException(
                     "Department cannot be null"

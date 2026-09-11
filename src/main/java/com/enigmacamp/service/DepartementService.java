@@ -16,4 +16,6 @@ public interface DepartementService {
 
     void delete(Long id);
 
+    void validateDepartment (Department department);
+
 }

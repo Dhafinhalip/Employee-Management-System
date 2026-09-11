@@ -1,19 +1,21 @@
 package com.enigmacamp.service.impl;
 
 import com.enigmacamp.dao.EmployeeDao;
-import com.enigmacamp.entity.Department;
 import com.enigmacamp.entity.Employee;
+import com.enigmacamp.service.DepartementService;
 import com.enigmacamp.service.EmployeeService;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.List;
 import java.util.Optional;
 
 public class EmployeeServiceImpl implements EmployeeService {
 
     private EmployeeDao employeeDao;
-    private DepartementServiceImpl departementService;
+    private DepartementService departementService;
 
-    public EmployeeServiceImpl(EmployeeDao employeeDao, DepartementServiceImpl departementService) {
+    public EmployeeServiceImpl(EmployeeDao employeeDao, DepartementService departementService) {
         this.employeeDao = employeeDao;
         this.departementService = departementService;
     }
@@ -72,7 +74,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
     }
 
-    protected void validateEmployee (Employee employee) {
+    public void validateEmployee(Employee employee) {
+        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+
+        Pattern p = Pattern.compile(emailRegex);
 
         if (employee == null) {
             throw new IllegalArgumentException(
@@ -88,11 +94,16 @@ public class EmployeeServiceImpl implements EmployeeService {
             );
         }
 
-        if (employee.getEmail() == null ||
-                employee.getEmail().isBlank()) {
-
+        if (employee.getEmail() == null ) {
             throw new IllegalArgumentException(
-                    "Employee email cannot be empty"
+                    "Employee Email cannot be empty"
+            );
+        }
+
+        Matcher m = p.matcher(employee.getEmail());
+        if (!m.matches()) {
+            throw new IllegalArgumentException(
+                    "Employee Email Is Not Valid"
             );
         }
 

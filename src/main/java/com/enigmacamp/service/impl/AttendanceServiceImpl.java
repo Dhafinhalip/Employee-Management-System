@@ -3,15 +3,16 @@ package com.enigmacamp.service.impl;
 import com.enigmacamp.dao.AttendanceDao;
 import com.enigmacamp.entity.Attendance;
 import com.enigmacamp.service.AttendanceService;
+import com.enigmacamp.service.EmployeeService;
 
 import java.util.List;
 import java.util.Optional;
 
 public class AttendanceServiceImpl implements AttendanceService {
     private AttendanceDao attendanceDao;
-    private EmployeeServiceImpl employeeService;
+    private EmployeeService employeeService;
 
-    public AttendanceServiceImpl(AttendanceDao attendanceDao, EmployeeServiceImpl employeeService) {
+    public AttendanceServiceImpl(AttendanceDao attendanceDao, EmployeeService employeeService) {
         this.attendanceDao = attendanceDao;
         this.employeeService = employeeService;
     }
