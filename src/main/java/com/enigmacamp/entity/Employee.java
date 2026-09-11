@@ -2,6 +2,8 @@ package com.enigmacamp.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "employees")
 public class Employee {
@@ -18,7 +20,7 @@ public class Employee {
     private Department department;
 
     @OneToMany(mappedBy = "employee")
-    private Attendance attendance;
+    private List<Attendance> attendance;
 
     public Employee() {
     }
@@ -82,11 +84,11 @@ public class Employee {
         this.department = department;
     }
 
-    public Attendance getAttendance() {
+    public List<Attendance> getAttendance() {
         return attendance;
     }
 
-    public void setAttendance(Attendance attendance) {
+    public void setAttendance(List<Attendance> attendance) {
         this.attendance = attendance;
     }
 }

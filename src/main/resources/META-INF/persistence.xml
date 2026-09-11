@@ -8,7 +8,9 @@
     <persistence-unit name="lc-ems">
 
         <!-- Entity yang dikelola oleh persistence unit -->
-<!--        <class>com.enigmacamp.entity.User</class>-->
+        <class>com.enigmacamp.entity.Department</class>
+        <class>com.enigmacamp.entity.Employee</class>
+        <class>com.enigmacamp.entity.Attendance</class>
 
         <properties>
 

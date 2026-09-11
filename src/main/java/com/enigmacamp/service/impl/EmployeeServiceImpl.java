@@ -90,7 +90,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 employee.getFullname().isBlank()) {
 
             throw new IllegalArgumentException(
-                    "Departname name cannot be empty"
+                    "Department name cannot be empty"
             );
         }
 

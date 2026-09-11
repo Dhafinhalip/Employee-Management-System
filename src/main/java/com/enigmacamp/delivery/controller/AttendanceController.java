@@ -4,9 +4,14 @@ import com.enigmacamp.entity.Attendance;
 import com.enigmacamp.entity.Employee;
 import com.enigmacamp.service.AttendanceService;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class AttendanceController {
     private final Scanner scanner = new Scanner(System.in);
@@ -24,6 +29,7 @@ public class AttendanceController {
             System.out.println("3. GET ATTENDANCE BY ID");
             System.out.println("4. UPDATE ATTENDANCE");
             System.out.println("5. DELETE ATTENDANCE");
+            System.out.println("6. MOST DILIGENT EMPLOYEE");
             System.out.println("0. EXIT");
             System.out.print("Choose menu: ");
             int choice = Integer.parseInt(scanner.nextLine());
@@ -33,6 +39,7 @@ public class AttendanceController {
                 case 3 -> getByIdHandler();
                 case 4 -> updateHandler();
                 case 5 -> deleteHandler();
+                case 6 -> mostDiligentEmployee();
                 case 0 -> {
                     System.out.println("Bye...");
                     return;
@@ -135,5 +142,31 @@ public class AttendanceController {
         }catch (Exception e) {
             System.out.println("Error : " + e.getMessage());
         }
+    }
+
+    private void mostDiligentEmployee() {
+
+        List<Attendance> allAttendance = attendanceService.getAll();
+
+        Map<String, Double> worksHourPerEmployee = allAttendance.stream().collect(Collectors.groupingBy(attendance -> attendance.getEmployee().getFullname(),
+                Collectors.summingDouble(attendance -> {
+                    long minutes = Duration.between(
+                            attendance.getCheckIn(),
+                            attendance.getCheckOut()
+                    ).toMinutes();
+                    return minutes / 60.0;
+                })));
+
+        Optional<Map.Entry<String, Double>> mostDiligent = worksHourPerEmployee.entrySet().stream().max(Map.Entry.comparingByValue());
+
+        mostDiligent.ifPresentOrElse(md -> System.out.println(
+                "Most Diligent Employee : " + md.getKey() +
+                "Total Working Hours : " + md.getValue()), () -> {
+
+                    System.out.println(
+                            "Data is Empty"
+                    );
+
+        }   );
     }
 }

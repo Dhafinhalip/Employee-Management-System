@@ -5,7 +5,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 public class JPAConfig {
-    private static final String PERSISTENCE_UNIT_NAME = "jpa-lab";
+    private static final String PERSISTENCE_UNIT_NAME = "lc-ems";
     private static EntityManagerFactory emf;
 
     //    private JPAConfig() {}
