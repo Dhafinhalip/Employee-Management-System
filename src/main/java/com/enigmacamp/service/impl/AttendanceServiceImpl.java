@@ -58,7 +58,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     public void delete(Long id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException(
-                    "Department ID must be greater than 0"
+                    "Attendance ID must be greater than 0"
             );
         }
 
@@ -76,8 +76,6 @@ public class AttendanceServiceImpl implements AttendanceService {
                     "Student cannot be null"
             );
         }
-
-        employeeService.validateEmployee(attendance.getEmployee());
 
         if (employeeService.getById(attendance.getEmployee().getId()).isEmpty()) {
             throw new NullPointerException(

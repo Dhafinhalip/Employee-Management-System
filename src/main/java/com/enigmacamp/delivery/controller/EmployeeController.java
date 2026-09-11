@@ -4,6 +4,7 @@ import com.enigmacamp.entity.Department;
 import com.enigmacamp.entity.Employee;
 import com.enigmacamp.service.EmployeeService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class EmployeeController {
@@ -63,24 +64,34 @@ public class EmployeeController {
     }
 
     private void listHandler() {
+        List<Employee> employees = employeeService.getAll();
         System.out.println("ID | Full Name     | Email              | Department");
-        System.out.println("------------------------------------------------------");
+        System.out.println("----------------------------------------------------");
 
-        employeeService.getAll().forEach(employee -> System.out.printf("%d  | %s  | %s   | %s", employee.getId(),
-                employee.getFullname(),
-                employee.getEmail(),
-                employee.getDepartment().getName()));
+        for (Employee employee : employees) {
+            System.out.printf(
+                    "%d  | %s  | %s   | %s", employee.getId(),
+                    employee.getFullname(),
+                    employee.getEmail(),
+                    employee.getDepartment().getName() + "\n");
+        }
+
+//        employeeService.getAll().forEach(employee -> System.out.printf(
+//                "\n%d  | %s  | %s   | %s", employee.getId(),
+//                employee.getFullname(),
+//                employee.getEmail(),
+//                employee.getDepartment().getName()));
     }
 
     private void getByIdHandler() {
         System.out.print("Id : ");
         Long id = Long.valueOf(scanner.nextLine());
         employeeService.getById(id).ifPresentOrElse(employee -> System.out.println(
-                        "Employee ID : " + employee.getId() +
-                        "Full Name : " + employee.getFullname() +
-                        "Email  : " + employee.getEmail() +
-                        "Address : " + employee.getAddress() +
-                        "Department : " + employee.getDepartment().getName()),
+                        "\nEmployee ID : " + employee.getId() +
+                        "\nFull Name : " + employee.getFullname() +
+                        "\nEmail  : " + employee.getEmail() +
+                        "\nAddress : " + employee.getAddress() +
+                        "\nDepartment : " + employee.getDepartment().getName()),
                 () -> {
                     System.out.println(
                             "Employee with ID "

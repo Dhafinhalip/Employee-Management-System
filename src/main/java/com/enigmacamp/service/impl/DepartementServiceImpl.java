@@ -83,7 +83,7 @@ public class DepartementServiceImpl implements DepartementService {
                 department.getName().isBlank()) {
 
             throw new IllegalArgumentException(
-                    "Departname name cannot be empty"
+                    "Department name cannot be empty"
             );
         }
 
