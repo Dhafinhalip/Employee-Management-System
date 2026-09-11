@@ -42,9 +42,9 @@ public class DepartementServiceImpl implements DepartementService {
 
     @Override
     public Department update(Department department) {
-        if (department.getId() <= 0) {
+        if (getById(department.getId()).isEmpty()) {
             throw new IllegalArgumentException(
-                    "Department ID cannot be 0 or negative"
+                    "Department with ID" + department.getId() + "Not Found"
             );
         }
 
@@ -63,7 +63,12 @@ public class DepartementServiceImpl implements DepartementService {
             );
         }
 
-        departementDao.deleteById(id);
+        try {
+            departementDao.deleteById(id);
+            System.out.println("Department Data Succesfully Delete");
+        }catch (Exception e) {
+            throw e;
+        }
 
     }
 

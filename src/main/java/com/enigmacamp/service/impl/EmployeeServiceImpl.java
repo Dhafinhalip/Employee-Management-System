@@ -13,8 +13,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     private EmployeeDao employeeDao;
     private DepartementServiceImpl departementService;
 
-    public EmployeeServiceImpl(EmployeeDao employeeDao) {
+    public EmployeeServiceImpl(EmployeeDao employeeDao, DepartementServiceImpl departementService) {
         this.employeeDao = employeeDao;
+        this.departementService = departementService;
     }
 
     @Override
@@ -42,15 +43,16 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee update(Employee employee) {
-        if (employee.getId() <= 0) {
+        if (getById(employee.getId()).isEmpty()) {
             throw new IllegalArgumentException(
-                    "Employee ID cannot be 0 or negative"
+                    "Department with ID" + employee.getId() + "Not Found"
             );
         }
 
         validateEmployee(employee);
 
         return employeeDao.update(employee);
+
     }
 
     @Override
@@ -61,7 +63,13 @@ public class EmployeeServiceImpl implements EmployeeService {
             );
         }
 
-        employeeDao.deleteById(id);
+        try {
+            employeeDao.deleteById(id);
+            System.out.println("Employee Data Successfully Delete");
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     protected void validateEmployee (Employee employee) {
@@ -97,5 +105,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         departementService.validateDepartment(employee.getDepartment());
+
+        if (departementService.getById(employee.getDepartment().getId()).isEmpty()) {
+            throw new NullPointerException(
+                    "Department must exist."
+            );
+        }
     }
 }

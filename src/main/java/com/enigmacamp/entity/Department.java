@@ -19,6 +19,15 @@ public class Department {
     public Department() {
     }
 
+    public Department(long id) {
+        this.id = id;
+    }
+
+    public Department(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Department(String name) {
         this.name = name;
     }

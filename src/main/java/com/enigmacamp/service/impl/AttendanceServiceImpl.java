@@ -11,8 +11,9 @@ public class AttendanceServiceImpl implements AttendanceService {
     private AttendanceDao attendanceDao;
     private EmployeeServiceImpl employeeService;
 
-    public AttendanceServiceImpl(AttendanceDao attendanceDao) {
+    public AttendanceServiceImpl(AttendanceDao attendanceDao, EmployeeServiceImpl employeeService) {
         this.attendanceDao = attendanceDao;
+        this.employeeService = employeeService;
     }
 
     @Override
@@ -40,15 +41,16 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     public Attendance update(Attendance attendance) {
-        if (attendance.getId() <= 0) {
+        if (getById(attendance.getId()).isEmpty()) {
             throw new IllegalArgumentException(
-                    "Department ID cannot be 0 or negative"
+                    "Department with ID" + attendance.getId() + "Not Found"
             );
         }
 
         validateAttendance(attendance);
 
         return attendanceDao.update(attendance);
+
     }
 
     @Override
@@ -59,13 +61,26 @@ public class AttendanceServiceImpl implements AttendanceService {
             );
         }
 
-        attendanceDao.deleteById(id);
+        try {
+            attendanceDao.deleteById(id);
+            System.out.println("Attendance Data Successfully Delete");
+        }catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
+        }
     }
 
     private void validateAttendance(Attendance attendance) {
         if (attendance == null) {
             throw new IllegalArgumentException(
                     "Student cannot be null"
+            );
+        }
+
+        employeeService.validateEmployee(attendance.getEmployee());
+
+        if (employeeService.getById(attendance.getEmployee().getId()).isEmpty()) {
+            throw new NullPointerException(
+                    "Employee must exist."
             );
         }
 
@@ -80,18 +95,17 @@ public class AttendanceServiceImpl implements AttendanceService {
         if (attendance.getCheckIn() == null ||
                 attendance.getCheckIn().toString().isBlank()) {
             throw new IllegalArgumentException(
-                    "Employee Attendance cannot be empty"
+                    "checkIn cannot be empty"
             );
         }
 
         if (attendance.getCheckOut() == null ||
                 attendance.getCheckOut().toString().isBlank()) {
             throw new IllegalArgumentException(
-                    "Employee Attendance cannot be empty"
+                    "checkOut cannot be empty"
             );
         }
 
-        employeeService.validateEmployee(attendance.getEmployee());
 
     }
 }

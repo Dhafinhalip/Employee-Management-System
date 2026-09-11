@@ -23,6 +23,18 @@ public class Employee {
     public Employee() {
     }
 
+    public Employee(long id) {
+        this.id = id;
+    }
+
+    public Employee(long id, String fullname, String email, String address, Department department) {
+        this.id = id;
+        this.fullname = fullname;
+        this.email = email;
+        this.address = address;
+        this.department = department;
+    }
+
     public Employee(String fullname, String email, String address, Department department) {
         this.fullname = fullname;
         this.email = email;

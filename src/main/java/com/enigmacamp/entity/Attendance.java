@@ -23,11 +23,19 @@ public class Attendance {
     public Attendance() {
     }
 
-    public Attendance(LocalDate date, LocalTime checkIn, LocalTime checkOut, Employee employee) {
+    public Attendance(long id, LocalDate date, LocalTime checkIn, LocalTime checkOut, Employee employee) {
+        this.id = id;
         this.date = date;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.employee = employee;
+    }
+
+    public Attendance(Employee employee, LocalDate date, LocalTime checkIn, LocalTime checkOut ) {
+        this.employee = employee;
+        this.date = date;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
     }
 
     public long getId() {
