@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<persistence
+        xmlns="https://jakarta.ee/xml/ns/persistence"
+        version="3.0">
+
+    <!-- Satu konfigurasi persistence untuk aplikasi kita -->
+    <persistence-unit name="lc-ems">
+
+        <!-- Entity yang dikelola oleh persistence unit -->
+<!--        <class>com.enigmacamp.entity.User</class>-->
+
+        <properties>
+
+            <!-- Database connection -->
+            <property
+                    name="jakarta.persistence.jdbc.url"
+                    value="jdbc:postgresql://localhost:5432/lc-employee"/>
+
+            <property
+                    name="jakarta.persistence.jdbc.user"
+                    value="postgres"/>
+
+            <property
+                    name="jakarta.persistence.jdbc.password"
+                    value="DhafinHalip@555"/>
+
+            <property
+                    name="jakarta.persistence.jdbc.driver"
+                    value="org.postgresql.Driver"/>
+
+            <!-- Hibernate configuration -->
+            <property
+                    name="hibernate.dialect"
+                    value="org.hibernate.dialect.PostgreSQLDialect"/>
+
+            <!-- Tampilkan SQL hasil generate Hibernate -->
+            <property
+                    name="hibernate.show_sql"
+                    value="true"/>
+
+            <!-- Format SQL agar mudah dibaca -->
+            <property
+                    name="hibernate.format_sql"
+                    value="true"/>
+
+            <!-- Development only -->
+            <property
+                    name="hibernate.hbm2ddl.auto"
+                    value="update"/>
+
+        </properties>
+
+    </persistence-unit>
+
+</persistence>
