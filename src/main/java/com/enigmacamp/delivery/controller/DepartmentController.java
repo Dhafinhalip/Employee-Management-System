@@ -45,7 +45,7 @@ public class DepartmentController {
         System.out.print("Department Name: ");
         String name = scanner.nextLine();
 
-        var payload = new Department(name);
+        var payload = new Department(name.toUpperCase());
 
         try {
             Department department =  departementService.create(payload);
@@ -92,7 +92,7 @@ public class DepartmentController {
         System.out.print("Department Name: ");
         String name = scanner.nextLine();
 
-        Department department = new Department(id, name);
+        Department department = new Department(id, name.toUpperCase());
 
         try {
             Department updatedDepartment = departementService.update(department);

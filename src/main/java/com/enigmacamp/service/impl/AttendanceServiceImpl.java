@@ -5,6 +5,7 @@ import com.enigmacamp.entity.Attendance;
 import com.enigmacamp.service.AttendanceService;
 import com.enigmacamp.service.EmployeeService;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -94,17 +95,21 @@ public class AttendanceServiceImpl implements AttendanceService {
         if (attendance.getCheckIn() == null ||
                 attendance.getCheckIn().toString().isBlank()) {
             throw new IllegalArgumentException(
-                    "checkIn cannot be empty"
+                    "Check In cannot be empty"
+            );
+        }
+
+        if (attendance.getCheckIn() == LocalTime.of(17, 0)) {
+            throw new IllegalArgumentException(
+                    "Check-out time must be after check-in time"
             );
         }
 
         if (attendance.getCheckOut() == null ||
                 attendance.getCheckOut().toString().isBlank()) {
             throw new IllegalArgumentException(
-                    "checkOut cannot be empty"
+                    "Check Out cannot be empty"
             );
         }
-
-
     }
 }

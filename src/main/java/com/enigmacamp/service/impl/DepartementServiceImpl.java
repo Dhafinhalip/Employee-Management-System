@@ -85,7 +85,7 @@ public class DepartementServiceImpl implements DepartementService {
 
 
 
-    public void validateDepartment(Department department) {
+    private void validateDepartment(Department department) {
         if (department == null) {
             throw new IllegalArgumentException(
                     "Department cannot be null"
@@ -100,7 +100,7 @@ public class DepartementServiceImpl implements DepartementService {
             );
         }
 
-        if (getByName(department.getName()).isPresent()) {
+        if (getByName(department.getName().toUpperCase()).isPresent()) {
             throw new IllegalArgumentException(
                     "Department name cannot be duplicate"
             );
