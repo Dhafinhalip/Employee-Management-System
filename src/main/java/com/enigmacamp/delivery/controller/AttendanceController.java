@@ -30,10 +30,10 @@ public class AttendanceController {
             System.out.println("3. GET ATTENDANCE BY ID");
             System.out.println("4. UPDATE ATTENDANCE");
             System.out.println("5. DELETE ATTENDANCE");
-            System.out.println("6. MOST DILIGENT EMPLOYEE");
-            System.out.println("7. COUNT LATE EMPLOYEE");
-            System.out.println("8. COUNT NEVER ATTENDED EMPLOYEE");
-            System.out.println("9. TOTAL WORKING HOURS EMPLOYEE");
+            System.out.println("6. COUNT LATE EMPLOYEE");
+            System.out.println("7. COUNT NEVER ATTENDED EMPLOYEE");
+            System.out.println("8. TOTAL WORKING HOURS EMPLOYEE");
+            System.out.println("9. MOST DILIGENT EMPLOYEE");
             System.out.println("0. EXIT");
             System.out.print("Choose menu: ");
             int choice = Integer.parseInt(scanner.nextLine());
@@ -43,10 +43,10 @@ public class AttendanceController {
                 case 3 -> getByIdHandler();
                 case 4 -> updateHandler();
                 case 5 -> deleteHandler();
-                case 6 -> mostDiligentEmployee();
-                case 7 -> countLateEmployee();
-                case 8 -> countNeverAttended();
-                case 9 -> totalWorkingHoursPerDay();
+                case 6 -> countLateEmployee();
+                case 7 -> countNeverAttended();
+                case 8 -> totalWorkingHoursPerDay();
+                case 9 -> mostDiligentEmployee();
                 case 0 -> {
                     System.out.println("Bye...");
                     return;
@@ -68,10 +68,14 @@ public class AttendanceController {
         LocalTime checkOut = LocalTime.parse(scanner.nextLine());
 
         Employee employee = new Employee(id);
-        var payload = new Attendance(employee, date, checkIn, checkOut);
-        Attendance attendance = attendanceService.create(payload);
-        System.out.println("Attendance created successfully!");
-        System.out.println("Attendance ID: " + attendance.getId());
+        try {
+            var payload = new Attendance(employee, date, checkIn, checkOut);
+            Attendance attendance = attendanceService.create(payload);
+            System.out.println("Attendance created successfully!");
+            System.out.println("Attendance ID: " + attendance.getId());
+        } catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
+        }
     }
 
     private void listHandler() {
@@ -156,31 +160,6 @@ public class AttendanceController {
         }
     }
 
-    private void mostDiligentEmployee() {
-
-        List<Attendance> allAttendance = attendanceService.getAll();
-
-        Map<String, Double> worksHourPerEmployee = allAttendance.stream().collect(Collectors.groupingBy(attendance -> attendance.getEmployee().getFullname(),
-                Collectors.summingDouble(attendance -> {
-                    long minutes = Duration.between(
-                            attendance.getCheckIn(),
-                            attendance.getCheckOut()
-                    ).toMinutes();
-                    return minutes / 60.0;
-                })));
-
-        Optional<Map.Entry<String, Double>> mostDiligent = worksHourPerEmployee.entrySet().stream().max(Map.Entry.comparingByValue());
-
-        mostDiligent.ifPresentOrElse(md -> System.out.println(
-                "Most Diligent Employee : " + md.getKey() +
-                "Total Working Hours : " + md.getValue()), () -> {
-
-                    System.out.println(
-                            "Data is Empty"
-                    );
-
-        }   );
-    }
 
     private void countLateEmployee() {
         List<Attendance> allAttendance = attendanceService.getAll();
@@ -224,6 +203,34 @@ public class AttendanceController {
                     System.out.printf("%d  |  %s  |    %.1f \n", id, data.getKey(), data.getValue());
                     id++;
                 }
+        });
+    }
+
+    private void mostDiligentEmployee() {
+        List<Attendance> allAttendance = attendanceService.getAll();
+
+        allAttendance.stream().collect(Collectors.groupingBy(attendance -> attendance.getDate().getMonth(),
+                Collectors.groupingBy(attendance -> attendance.getEmployee().getFullname(),
+                Collectors.summingDouble(attendance -> {
+                    long minutes = Duration.between(attendance.getCheckIn(), attendance.getCheckOut()).toMinutes();
+                    return minutes / 60.0;
+                })))).forEach((month, map) -> {
+                System.out.println("--------------------------");
+                System.out.println("\t\t" + month);
+                System.out.println("--------------------------");
+
+                Map<String, Double> diligentEmployee = map.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue().reversed()).limit(1).collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1,e2) -> e1,
+                        LinkedHashMap::new
+                ));
+
+                diligentEmployee.forEach((k,v) -> {
+                    System.out.println("Most diligent employee :");
+                    System.out.println(k);
+                    System.out.println("Total Working Hours : " + v);
+                });
         });
     }
 }
