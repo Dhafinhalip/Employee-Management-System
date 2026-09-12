@@ -56,7 +56,7 @@ public class DepartementServiceImpl implements DepartementService {
     public Department update(Department department) {
         if (getById(department.getId()).isEmpty()) {
             throw new IllegalArgumentException(
-                    "Department with ID" + department.getId() + "Not Found"
+                    "Department with ID " + department.getId() + "Not Found"
             );
         }
 

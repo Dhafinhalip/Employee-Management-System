@@ -47,7 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee update(Employee employee) {
         if (getById(employee.getId()).isEmpty()) {
             throw new IllegalArgumentException(
-                    "Department with ID" + employee.getId() + "Not Found"
+                    "Department with ID " + employee.getId() + "Not Found"
             );
         }
 
