@@ -164,7 +164,7 @@ public class AttendanceController {
     private void countLateEmployee() {
         List<Attendance> allAttendance = attendanceService.getAll();
 
-        long totalEmployeeLate = allAttendance.stream().filter(attendance -> attendance.getCheckIn().isAfter(LocalTime.of(8,0))).count();
+        long totalEmployeeLate = allAttendance.stream().filter(attendance -> attendance.getCheckIn().isAfter(LocalTime.of(9,0))).count();
 
         System.out.println("Total late employees : " + totalEmployeeLate);
     }
