@@ -3,22 +3,23 @@ package com.enigmacamp.delivery.controller;
 import com.enigmacamp.entity.Attendance;
 import com.enigmacamp.entity.Employee;
 import com.enigmacamp.service.AttendanceService;
+import com.enigmacamp.service.EmployeeService;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Scanner;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class AttendanceController {
     private final Scanner scanner = new Scanner(System.in);
     private final AttendanceService attendanceService;
+    private final EmployeeService employeeService;
 
-    public AttendanceController(AttendanceService attendanceService) {
+    public AttendanceController(AttendanceService attendanceService, EmployeeService employeeService) {
         this.attendanceService = attendanceService;
+        this.employeeService = employeeService;
     }
 
     public void showMenu() {
@@ -30,6 +31,9 @@ public class AttendanceController {
             System.out.println("4. UPDATE ATTENDANCE");
             System.out.println("5. DELETE ATTENDANCE");
             System.out.println("6. MOST DILIGENT EMPLOYEE");
+            System.out.println("7. COUNT LATE EMPLOYEE");
+            System.out.println("8. COUNT NEVER ATTENDED EMPLOYEE");
+            System.out.println("9. TOTAL WORKING HOURS EMPLOYEE");
             System.out.println("0. EXIT");
             System.out.print("Choose menu: ");
             int choice = Integer.parseInt(scanner.nextLine());
@@ -40,6 +44,9 @@ public class AttendanceController {
                 case 4 -> updateHandler();
                 case 5 -> deleteHandler();
                 case 6 -> mostDiligentEmployee();
+                case 7 -> countLateEmployee();
+                case 8 -> countNeverAttended();
+                case 9 -> totalWorkingHoursPerDay();
                 case 0 -> {
                     System.out.println("Bye...");
                     return;
@@ -68,15 +75,20 @@ public class AttendanceController {
     }
 
     private void listHandler() {
-        System.out.println("ID | Date             | Check In     | Check Out              | Employee");
-        System.out.println("------------------------------------------------------");
-        attendanceService.getAll().forEach(attendance ->
-                System.out.printf("%d | %tF             | %tR     | %tR              | %s",
-                attendance.getId(),
-                attendance.getDate(),
-                attendance.getCheckIn(),
-                attendance.getCheckOut(),
-                attendance.getEmployee().getFullname()));
+        List<Attendance> attendances = attendanceService.getAll();
+        System.out.println("-----------------------------------------------------");
+        System.out.println("\t\t\t\t ATTENDANCE TABLE");
+        System.out.println("-----------------------------------------------------");
+        System.out.println("ID |    Date    | Check In | Check Out |   Employee");
+        System.out.println("-----------------------------------------------------");
+        for (Attendance attendance : attendances) {
+            System.out.printf("%d  | %tF |   %tR  |   %tR   | %s",
+                    attendance.getId(),
+                    attendance.getDate(),
+                    attendance.getCheckIn(),
+                    attendance.getCheckOut(),
+                    attendance.getEmployee().getFullname() + "\n");
+        }
     }
 
     private void getByIdHandler() {
@@ -103,9 +115,9 @@ public class AttendanceController {
         Long id = Long.valueOf(scanner.nextLine());
         System.out.print("Date (YYYY-MM-DD): ");
         LocalDate date = LocalDate.parse(scanner.nextLine());
-        System.out.print("Check In: ");
+        System.out.print("Check In (HH::MM): ");
         LocalTime checkIn = LocalTime.parse(scanner.nextLine());
-        System.out.print("Check Out: ");
+        System.out.print("Check Out(HH::MM): ");
         LocalTime checkOut = LocalTime.parse(scanner.nextLine());
         System.out.print("Employee ID: ");
         Long idEmployee = Long.valueOf(scanner.nextLine());
@@ -168,5 +180,50 @@ public class AttendanceController {
                     );
 
         }   );
+    }
+
+    private void countLateEmployee() {
+        List<Attendance> allAttendance = attendanceService.getAll();
+
+        long totalEmployeeLate = allAttendance.stream().filter(attendance -> attendance.getCheckIn().isAfter(LocalTime.of(8,0))).count();
+
+        System.out.println("Total late employees : " + totalEmployeeLate);
+    }
+
+    private void countNeverAttended() {
+        List<Attendance> allAttendance = attendanceService.getAll();
+        List<Employee> allEmployee = employeeService.getAll();
+
+        long totalNeverAttended = allEmployee.stream().filter(employee -> allAttendance.stream().noneMatch(attendance ->
+                attendance.getEmployee().getId() == employee.getId())).count();
+
+        System.out.println("Employees Who Never Attended : " + totalNeverAttended);
+    }
+
+    private void totalWorkingHoursPerDay() {
+        List<Attendance> allAttendance = attendanceService.getAll();
+
+        allAttendance.stream().collect(Collectors.groupingBy(Attendance::getDate,
+                Collectors.groupingBy(attendance -> attendance.getEmployee().getFullname(), Collectors.summingDouble(att -> {
+                    long minutes = Duration.between(
+                            att.getCheckIn(), att.getCheckOut()
+                    ).toMinutes();
+
+                    return minutes / 60.0;
+                })))).forEach((date, nameMap) -> {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
+                String output = date.format(formatter);
+                int id = 1;
+                System.out.println("----------------------------------");
+                System.out.println("\t\t" + output);
+                System.out.println("----------------------------------");
+                System.out.println("ID |    Employee    | Working Hour");
+                System.out.println("----------------------------------");
+
+                for (Map.Entry<String, Double> data : nameMap.entrySet()) {
+                    System.out.printf("%d  |  %s  |    %.1f \n", id, data.getKey(), data.getValue());
+                    id++;
+                }
+        });
     }
 }

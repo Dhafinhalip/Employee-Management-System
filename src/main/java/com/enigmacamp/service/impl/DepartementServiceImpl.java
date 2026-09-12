@@ -41,6 +41,18 @@ public class DepartementServiceImpl implements DepartementService {
     }
 
     @Override
+    public Optional<Department> getByName(String name) {
+
+        if (name == null || name.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Department name cannot be empty"
+            );
+        }
+
+        return  departementDao.findByName(name);
+    }
+
+    @Override
     public Department update(Department department) {
         if (getById(department.getId()).isEmpty()) {
             throw new IllegalArgumentException(
@@ -69,8 +81,9 @@ public class DepartementServiceImpl implements DepartementService {
         }catch (Exception e) {
             throw e;
         }
-
     }
+
+
 
     public void validateDepartment(Department department) {
         if (department == null) {
@@ -84,6 +97,12 @@ public class DepartementServiceImpl implements DepartementService {
 
             throw new IllegalArgumentException(
                     "Department name cannot be empty"
+            );
+        }
+
+        if (getByName(department.getName()).isPresent()) {
+            throw new IllegalArgumentException(
+                    "Department name cannot be duplicate"
             );
         }
 

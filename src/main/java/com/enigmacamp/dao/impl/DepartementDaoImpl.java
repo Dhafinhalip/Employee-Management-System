@@ -6,6 +6,7 @@ import com.enigmacamp.entity.Attendance;
 import com.enigmacamp.entity.Department;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
 
 
 import java.util.List;
@@ -49,7 +50,24 @@ public class DepartementDaoImpl implements DepartementDao {
     @Override
     public Optional<Department> findById(Long id) {
         try (EntityManager entityManager = JPAConfig.connect()) {
+
             Department department = entityManager.find(Department.class, id);
+
+            return Optional.ofNullable(department);
+        }
+    }
+
+    @Override
+    public Optional<Department> findByName(String name) {
+        try (EntityManager entityManager = JPAConfig.connect()) {
+
+            String selectQuery = "SELECT d FROM Department d WHERE d.name = :name";
+
+            TypedQuery<Department> query = entityManager.createQuery(selectQuery, Department.class);
+
+            query.setParameter("name", name);
+
+            Department department = query.getSingleResult();
 
             return Optional.ofNullable(department);
         }

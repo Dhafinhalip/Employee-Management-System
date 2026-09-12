@@ -12,10 +12,14 @@ public interface DepartementService {
 
     Optional<Department> getById(Long id);
 
+    Optional<Department> getByName(String name);
+
     Department update(Department department);
 
     void delete(Long id);
 
     void validateDepartment (Department department);
+
+
 
 }

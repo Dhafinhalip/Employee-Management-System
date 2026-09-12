@@ -12,6 +12,8 @@ public interface DepartementDao {
 
     Optional<Department> findById(Long id);
 
+    Optional<Department> findByName(String name);
+
     Department update(Department department);
 
     void deleteById(Long id);

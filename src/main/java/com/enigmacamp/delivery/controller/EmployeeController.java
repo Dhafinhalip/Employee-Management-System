@@ -65,29 +65,26 @@ public class EmployeeController {
 
     private void listHandler() {
         List<Employee> employees = employeeService.getAll();
-        System.out.println("ID | Full Name     | Email              | Department");
+        System.out.println("----------------------------------------------------");
+        System.out.println("\t\t\t\t EMPLOYEE TABLE");
+        System.out.println("----------------------------------------------------");
+        System.out.println("ID |   Full Name   |       Email        | Department");
         System.out.println("----------------------------------------------------");
 
         for (Employee employee : employees) {
             System.out.printf(
-                    "%d  | %s  | %s   | %s", employee.getId(),
+                    "%d  |  %s |  %s  |    %s", employee.getId(),
                     employee.getFullname(),
                     employee.getEmail(),
                     employee.getDepartment().getName() + "\n");
         }
-
-//        employeeService.getAll().forEach(employee -> System.out.printf(
-//                "\n%d  | %s  | %s   | %s", employee.getId(),
-//                employee.getFullname(),
-//                employee.getEmail(),
-//                employee.getDepartment().getName()));
     }
 
     private void getByIdHandler() {
         System.out.print("Id : ");
         Long id = Long.valueOf(scanner.nextLine());
         employeeService.getById(id).ifPresentOrElse(employee -> System.out.println(
-                        "\nEmployee ID : " + employee.getId() +
+                        "Employee ID : " + employee.getId() +
                         "\nFull Name : " + employee.getFullname() +
                         "\nEmail  : " + employee.getEmail() +
                         "\nAddress : " + employee.getAddress() +
@@ -116,17 +113,17 @@ public class EmployeeController {
 
         Department department = new Department(idDepartment);
 
-        Employee employee = new Employee(name, email, address, department);
+        Employee employee = new Employee(id, name, email, address, department);
 
         try {
             Employee updatedEmployee = employeeService.update(employee);
             System.out.println("Employee is Succesfully Update");
             System.out.println(
                     "Employee ID : " + updatedEmployee.getId() +
-                    "Full Name : " + updatedEmployee.getFullname() +
-                    "Email  : " + updatedEmployee.getEmail() +
-                    "Address : " + updatedEmployee.getAddress() +
-                    "Department : " + updatedEmployee.getDepartment().getName());
+                    "\nFull Name : " + updatedEmployee.getFullname() +
+                    "\nEmail  : " + updatedEmployee.getEmail() +
+                    "\nAddress : " + updatedEmployee.getAddress() +
+                    "\nDepartment : " + updatedEmployee.getDepartment().getName());
         } catch (IllegalArgumentException e) {
             System.out.println("Error : " + e.getMessage());
         }

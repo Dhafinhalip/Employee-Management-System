@@ -3,6 +3,7 @@ package com.enigmacamp.delivery.controller;
 import com.enigmacamp.entity.Department;
 import com.enigmacamp.service.DepartementService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class DepartmentController {
@@ -45,9 +46,9 @@ public class DepartmentController {
         String name = scanner.nextLine();
 
         var payload = new Department(name);
-        Department department =  departementService.create(payload);
 
         try {
+            Department department =  departementService.create(payload);
             System.out.println("Departement created successfully!");
             System.out.println("Departement ID: " + department.getId());
         }catch (Exception e) {
@@ -56,10 +57,16 @@ public class DepartmentController {
     }
 
     private void listHandler() {
+        List<Department> departments = departementService.getAll();
+        System.out.println("----------------------");
+        System.out.println("   DEPARTMENT TABLE");
+        System.out.println("----------------------");
         System.out.println("ID | Department Name  ");
         System.out.println("----------------------");
-        departementService.getAll().forEach(department -> System.out.printf("%d  | %s ", department.getId(),
-                department.getName()));
+        for (Department department : departments) {
+            System.out.printf("%d  | %s ", department.getId(),
+                    department.getName() + "\n");
+        }
     }
 
     private void getByIdHandler() {
@@ -67,7 +74,7 @@ public class DepartmentController {
         Long id = Long.valueOf(scanner.nextLine());
         departementService.getById(id).ifPresentOrElse(
                 department -> System.out.println(
-                        "Department ID : " + department.getId() +
+                        "Department ID : " + department.getId() + "\n" +
                         "Full Name : " + department.getName()),
                 () -> {
                     System.out.println(
@@ -92,7 +99,7 @@ public class DepartmentController {
 
             System.out.println("Department Succesfully Update");
             System.out.println(
-                    "Department ID : " + updatedDepartment.getId() +
+                    "Department ID : " + updatedDepartment.getId() + "\n" +
                     "Full Name : " + updatedDepartment.getName());
         } catch (IllegalArgumentException e) {
             System.out.println("Error : " + e.getMessage());

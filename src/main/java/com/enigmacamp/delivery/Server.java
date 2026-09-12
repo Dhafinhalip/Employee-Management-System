@@ -43,7 +43,7 @@ public class Server {
             switch (choice) {
                 case 1 -> new EmployeeController(employeeService).showMenu();
                 case 2 -> new DepartmentController(departementService).showMenu();
-                case 3 -> new AttendanceController(attendanceService).showMenu();
+                case 3 -> new AttendanceController(attendanceService, employeeService).showMenu();
                 case 0 -> {
                     System.out.println("Bye...");
                     JPAConfig.disconnect();
