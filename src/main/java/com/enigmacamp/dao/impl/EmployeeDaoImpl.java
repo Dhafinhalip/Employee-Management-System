@@ -6,6 +6,7 @@ import com.enigmacamp.entity.Department;
 import com.enigmacamp.entity.Employee;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,20 @@ public class EmployeeDaoImpl implements EmployeeDao {
             Employee employee = entityManager.find(Employee.class, id);
 
             return Optional.ofNullable(employee);
+        }
+    }
+
+    @Override
+    public Optional<Employee> findByEmail(String email) {
+        try (EntityManager entityManager = JPAConfig.connect()) {
+
+            String selectQuery = "SELECT e FROM Employee e WHERE e.email = :email";
+
+            TypedQuery<Employee> query = entityManager.createQuery(selectQuery, Employee.class);
+
+            query.setParameter("email", email);
+
+            return query.getResultStream().findFirst();
         }
     }
 

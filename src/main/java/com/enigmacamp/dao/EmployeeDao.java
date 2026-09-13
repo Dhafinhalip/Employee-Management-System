@@ -12,6 +12,8 @@ public interface EmployeeDao {
 
     Optional<Employee> findById(Long id);
 
+    Optional<Employee> findByEmail(String email);
+
     Employee update(Employee employee);
 
     void deleteById(Long id);

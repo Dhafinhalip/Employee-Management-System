@@ -44,6 +44,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    public Optional<Employee> getByEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Email cannot be empty"
+            );
+        }
+
+        return employeeDao.findByEmail(email);
+    }
+
+    @Override
     public Employee update(Employee employee) {
         if (getById(employee.getId()).isEmpty()) {
             throw new IllegalArgumentException(
@@ -106,6 +117,13 @@ public class EmployeeServiceImpl implements EmployeeService {
                     "Employee Email Is Not Valid"
             );
         }
+
+        if (getByEmail(employee.getEmail()).isPresent()) {
+            throw new IllegalArgumentException(
+                    "Email already exist"
+            );
+        }
+
 
         if (employee.getAddress() == null ||
                 employee.getAddress().isBlank()) {

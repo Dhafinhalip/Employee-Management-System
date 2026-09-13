@@ -12,6 +12,8 @@ public interface EmployeeService {
 
     Optional<Employee> getById(Long id);
 
+    Optional<Employee> getByEmail(String email);
+
     Employee update(Employee employee);
 
     void delete(Long id);
