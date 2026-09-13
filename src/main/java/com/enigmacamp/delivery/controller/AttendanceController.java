@@ -217,7 +217,7 @@ public class AttendanceController {
         List<Attendance> allAttendance = attendanceService.getAll();
 
         allAttendance.stream().collect(Collectors.groupingBy(attendance -> attendance.getDate().getMonth(),
-                Collectors.groupingBy(attendance -> attendance.getEmployee().getFullname(),
+                Collectors.groupingBy(Attendance::getEmployee,
                 Collectors.summingDouble(attendance -> {
                     long minutes = Duration.between(attendance.getCheckIn(), attendance.getCheckOut()).toMinutes();
                     return minutes / 60.0;
@@ -226,7 +226,7 @@ public class AttendanceController {
                 System.out.println("\t\t" + month);
                 System.out.println("--------------------------");
 
-                Map<String, Double> diligentEmployee = map.entrySet().stream().sorted(Map.Entry.<String, Double>comparingByValue().reversed()).limit(1).collect(Collectors.toMap(
+                Map<Employee, Double> diligentEmployee = map.entrySet().stream().sorted(Map.Entry.<Employee, Double>comparingByValue().reversed()).limit(1).collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
                         (e1,e2) -> e1,
@@ -235,7 +235,7 @@ public class AttendanceController {
 
                 diligentEmployee.forEach((k,v) -> {
                     System.out.println("Most diligent employee :");
-                    System.out.println(k);
+                    System.out.println(k.getFullname());
                     System.out.println("Total Working Hours : " + v);
                 });
         });
