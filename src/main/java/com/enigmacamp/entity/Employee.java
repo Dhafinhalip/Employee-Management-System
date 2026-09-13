@@ -29,6 +29,11 @@ public class Employee {
         this.id = id;
     }
 
+    public Employee(String fullname) {
+        this.fullname = fullname;
+    }
+
+
     public Employee(long id, String fullname, String email, String address, Department department) {
         this.id = id;
         this.fullname = fullname;

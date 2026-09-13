@@ -24,6 +24,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee create(Employee employee) {
         validateEmployee(employee);
 
+        if (getByEmail(employee.getEmail()) != null) {
+            throw new IllegalArgumentException(
+                    "Email already exist"
+            );
+        }
+
         return employeeDao.save(employee);
     }
 
@@ -33,7 +39,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Optional<Employee> getById(Long id) {
+    public Employee getById(Long id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException(
                     "Employee ID must be greater than 0"
@@ -44,7 +50,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public Optional<Employee> getByEmail(String email) {
+    public Employee getByEmail(String email) {
         if (email == null || email.isBlank()) {
             throw new IllegalArgumentException(
                     "Email cannot be empty"
@@ -56,13 +62,15 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     public Employee update(Employee employee) {
-        if (getById(employee.getId()).isEmpty()) {
+        validateEmployee(employee);
+
+        Employee employeeExist = getByEmail(employee.getEmail());
+
+        if (employeeExist != null && employeeExist.getId() != employee.getId()) {
             throw new IllegalArgumentException(
-                    "Department with ID " + employee.getId() + " Not Found"
+                    "Email already exist"
             );
         }
-
-        validateEmployee(employee);
 
         return employeeDao.update(employee);
 
@@ -105,7 +113,7 @@ public class EmployeeServiceImpl implements EmployeeService {
             );
         }
 
-        if (employee.getEmail() == null ) {
+        if (employee.getEmail() == null || employee.getEmail().isEmpty()) {
             throw new IllegalArgumentException(
                     "Employee Email cannot be empty"
             );
@@ -117,13 +125,6 @@ public class EmployeeServiceImpl implements EmployeeService {
                     "Employee Email Is Not Valid"
             );
         }
-
-        if (getByEmail(employee.getEmail()).isPresent()) {
-            throw new IllegalArgumentException(
-                    "Email already exist"
-            );
-        }
-
 
         if (employee.getAddress() == null ||
                 employee.getAddress().isBlank()) {

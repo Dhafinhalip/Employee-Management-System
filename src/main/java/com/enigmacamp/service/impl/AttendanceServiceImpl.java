@@ -45,7 +45,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     public Attendance update(Attendance attendance) {
         if (getById(attendance.getId()).isEmpty()) {
             throw new IllegalArgumentException(
-                    "Department with ID " + attendance.getId() + " Not Found"
+                    "Attendance with ID " + attendance.getId() + " Not Found"
             );
         }
 
@@ -78,7 +78,7 @@ public class AttendanceServiceImpl implements AttendanceService {
             );
         }
 
-        if (employeeService.getById(attendance.getEmployee().getId()).isEmpty()) {
+        if (employeeService.getById(attendance.getEmployee().getId()) == null) {
             throw new NullPointerException(
                     "Employee must exist."
             );

@@ -10,9 +10,13 @@ public interface EmployeeDao {
 
     List<Employee> findAll();
 
-    Optional<Employee> findById(Long id);
+    Employee findById(Long id);
 
-    Optional<Employee> findByEmail(String email);
+    Employee findByName(String name);
+
+    List<Employee> findByDepartment(String department);
+
+    Employee findByEmail(String email);
 
     Employee update(Employee employee);
 

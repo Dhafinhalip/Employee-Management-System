@@ -5,6 +5,7 @@ import com.enigmacamp.entity.Employee;
 import com.enigmacamp.service.EmployeeService;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class EmployeeController {
@@ -92,20 +93,21 @@ public class EmployeeController {
         try {
             System.out.print("Id : ");
             Long id = Long.valueOf(scanner.nextLine());
-            employeeService.getById(id).ifPresentOrElse(employee -> System.out.println(
-                            "Employee ID : " + employee.getId() +
-                            "\nFull Name : " + employee.getFullname() +
-                            "\nEmail  : " + employee.getEmail() +
-                            "\nAddress : " + employee.getAddress() +
-                            "\nDepartment : " + employee.getDepartment().getName()),
-                    () -> {
-                        System.out.println(
-                                "Employee with ID "
-                                        + id
-                                        + " not found."
-                        );
-                    }
-            );
+
+            Employee employee = employeeService.getById(id);
+
+            if (employee == null) {
+                System.out.println("Employee with ID " + id + " Not Found ");
+                return;
+            }
+
+            System.out.println(
+                "Employee ID : " + employee.getId() +
+                "\nFull Name : " + employee.getFullname() +
+                "\nEmail  : " + employee.getEmail() +
+                "\nAddress : " + employee.getAddress() +
+                "\nDepartment : " + employee.getDepartment().getName());
+
         }catch (Exception e) {
             System.out.println("Error : " + e.getMessage());
         }
@@ -114,35 +116,77 @@ public class EmployeeController {
     private void updateHandler() {
 
         try {
+            Employee updatedEmployee = null;
+            int choice;
+
             System.out.print("Id: ");
             Long id = Long.valueOf(scanner.nextLine());
 
-            System.out.print("Name: ");
-            String name = scanner.nextLine();
+            Employee employee = employeeService.getById(id);
 
-            System.out.print("Email: ");
-            String email = scanner.nextLine();
+            if (employee == null) {
+                System.out.println("Employee with ID " + id + " Not Found ");
+                return;
+            }
 
-            System.out.print("Address: ");
-            String address = scanner.nextLine();
+            do {
+                System.out.println("========== EMPLOYEE UPDATE ==========");
+                System.out.println("1. UPDATE NAME");
+                System.out.println("2. UPDATE EMAIL");
+                System.out.println("3. UPDATE ADDRESS");
+                System.out.println("4. UPDATE DEPARTMENT");
+                System.out.println("0. EXIT");
+                System.out.print("Choose menu: ");
+                choice = Integer.parseInt(scanner.nextLine());
+                switch (choice) {
+                    case 1:
+                        System.out.print("Name: ");
+                        String name = scanner.nextLine();
+                        employee.setFullname(name);
+                        updatedEmployee = employeeService.update(employee);
+                        break;
+                    case 2:
+                        System.out.print("Email: ");
+                        String email = scanner.nextLine();
+                        employee.setEmail(email);
+                        updatedEmployee = employeeService.update(employee);
+                        break;
+                    case 3:
+                        System.out.print("Address: ");
+                        String address = scanner.nextLine();
+                        employee.setAddress(address);
+                        updatedEmployee = employeeService.update(employee);
+                        break;
+                    case 4:
+                        System.out.print("Department Id : ");
+                        Long idDepartment = Long.valueOf(scanner.nextLine());
 
-            System.out.print("Department Id : ");
-            Long idDepartment = Long.valueOf(scanner.nextLine());
+                        Department department = new Department(idDepartment);
+                        employee.setDepartment(department);
+                        updatedEmployee = employeeService.update(employee);
+                        break;
+                    case 0:
+                        System.out.println("Bye...");
+                        break;
+                    default:
+                        System.out.println("Choose the right menu (0-5)!");
+                }
 
-            Department department = new Department(idDepartment);
+                if (updatedEmployee == null) {
+                    return;
+                }
 
-            Employee employee = new Employee(id, name, email, address, department);
-            Employee updatedEmployee = employeeService.update(employee);
+                System.out.println("Employee is Succesfully Update");
+                System.out.println(
+                        "Employee ID : " + updatedEmployee.getId() +
+                        "\nFull Name : " + updatedEmployee.getFullname() +
+                        "\nEmail  : " + updatedEmployee.getEmail() +
+                        "\nAddress : " + updatedEmployee.getAddress() +
+                        "\nDepartment : " + updatedEmployee.getDepartment().getName());
 
-            System.out.println("Employee is Succesfully Update");
-            System.out.println(
-                    "Employee ID : " + updatedEmployee.getId() +
-                    "\nFull Name : " + updatedEmployee.getFullname() +
-                    "\nEmail  : " + updatedEmployee.getEmail() +
-                    "\nAddress : " + updatedEmployee.getAddress() +
-                    "\nDepartment : " + updatedEmployee.getDepartment().getName());
+            } while (choice != 0);
 
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             System.out.println("Error : " + e.getMessage());
         }
     }
@@ -152,16 +196,14 @@ public class EmployeeController {
             System.out.print("Id : ");
             Long id = Long.valueOf(scanner.nextLine());
 
-            employeeService.getById(id).ifPresentOrElse(
-                    employee -> employeeService.delete(id),
-                    () -> {
-                        System.out.println(
-                                "Employee with ID "
-                                        + id
-                                        + " not found."
-                        );
-                    }
-            );
+            Employee employee = employeeService.getById(id);
+
+            if (employee == null) {
+                System.out.println("Employee with ID " + id + " Not Found ");
+                return;
+            }
+
+            employeeService.delete(id);
         } catch (Exception e) {
             System.out.println("Error : " + e.getMessage());
         }

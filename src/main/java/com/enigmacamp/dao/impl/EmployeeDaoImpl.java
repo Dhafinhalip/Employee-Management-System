@@ -6,10 +6,12 @@ import com.enigmacamp.entity.Department;
 import com.enigmacamp.entity.Employee;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class EmployeeDaoImpl implements EmployeeDao {
     @Override
@@ -47,16 +49,48 @@ public class EmployeeDaoImpl implements EmployeeDao {
     }
 
     @Override
-    public Optional<Employee> findById(Long id) {
+    public Employee findById(Long id) {
         try (EntityManager entityManager = JPAConfig.connect()) {
             Employee employee = entityManager.find(Employee.class, id);
 
-            return Optional.ofNullable(employee);
+            return employee;
         }
     }
 
     @Override
-    public Optional<Employee> findByEmail(String email) {
+    public Employee findByName(String name) {
+        try (EntityManager entityManager = JPAConfig.connect()) {
+
+            String selectQuery = "SELECT e FROM Employee e WHERE e.name = :name";
+
+            TypedQuery<Employee> query = entityManager.createQuery(selectQuery, Employee.class);
+
+            query.setParameter("name", name);
+
+            Employee employee = query.getSingleResult();
+
+            return employee;
+        }
+    }
+
+    @Override
+    public List<Employee> findByDepartment(String department) {
+        try (EntityManager entityManager = JPAConfig.connect()) {
+
+            String selectQuery = "SELECT e FROM Employee e WHERE e.department = :department";
+
+            TypedQuery<Employee> query = entityManager.createQuery(selectQuery, Employee.class);
+
+            query.setParameter("department", department);
+
+            List<Employee> employee = query.getResultList();
+
+            return employee;
+        }
+    }
+
+    @Override
+    public Employee findByEmail(String email) {
         try (EntityManager entityManager = JPAConfig.connect()) {
 
             String selectQuery = "SELECT e FROM Employee e WHERE e.email = :email";
@@ -65,7 +99,9 @@ public class EmployeeDaoImpl implements EmployeeDao {
 
             query.setParameter("email", email);
 
-            return query.getResultStream().findFirst();
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return  null;
         }
     }
 

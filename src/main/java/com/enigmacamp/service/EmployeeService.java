@@ -10,9 +10,9 @@ public interface EmployeeService {
 
     List<Employee> getAll();
 
-    Optional<Employee> getById(Long id);
+    Employee getById(Long id);
 
-    Optional<Employee> getByEmail(String email);
+    Employee getByEmail(String email);
 
     Employee update(Employee employee);
 
