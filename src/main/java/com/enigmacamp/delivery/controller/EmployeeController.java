@@ -78,7 +78,7 @@ public class EmployeeController {
         System.out.println("----------------------------------------------------");
         System.out.println("\t\t\t\t\tEMPLOYEE TABLE");
         System.out.println("----------------------------------------------------");
-        System.out.println("ID |   Full Name   |       Email        | Department");
+        System.out.println("ID  |   Full Name   |       Email        | Department");
         System.out.println("----------------------------------------------------");
 
         if (employees.isEmpty()) {
@@ -87,7 +87,7 @@ public class EmployeeController {
 
         for (Employee employee : employees) {
             System.out.printf(
-                    "%d  |  %s |  %s  |    %s", employee.getId(),
+                    "%d   |  %s |  %s  |    %s", employee.getId(),
                     employee.getFullname(),
                     employee.getEmail(),
                     employee.getDepartment().getName() + "\n");
