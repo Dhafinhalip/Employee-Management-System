@@ -8,7 +8,6 @@ import com.enigmacamp.service.EmployeeService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.List;
-import java.util.Optional;
 
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -47,6 +46,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         return employeeDao.findById(id);
+    }
+
+    @Override
+    public Employee getByName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException(
+                    "Email cannot be empty"
+            );
+        }
+
+        return employeeDao.findByName(name);
     }
 
     @Override

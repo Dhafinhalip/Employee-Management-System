@@ -10,8 +10,6 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class EmployeeDaoImpl implements EmployeeDao {
     @Override
@@ -61,31 +59,16 @@ public class EmployeeDaoImpl implements EmployeeDao {
     public Employee findByName(String name) {
         try (EntityManager entityManager = JPAConfig.connect()) {
 
-            String selectQuery = "SELECT e FROM Employee e WHERE e.name = :name";
+            String selectQuery = "SELECT e FROM Employee e WHERE e.fullname = :fullname";
 
             TypedQuery<Employee> query = entityManager.createQuery(selectQuery, Employee.class);
 
-            query.setParameter("name", name);
+            query.setParameter("fullname", name);
 
-            Employee employee = query.getSingleResult();
+            return query.getSingleResult();
 
-            return employee;
-        }
-    }
-
-    @Override
-    public List<Employee> findByDepartment(String department) {
-        try (EntityManager entityManager = JPAConfig.connect()) {
-
-            String selectQuery = "SELECT e FROM Employee e WHERE e.department = :department";
-
-            TypedQuery<Employee> query = entityManager.createQuery(selectQuery, Employee.class);
-
-            query.setParameter("department", department);
-
-            List<Employee> employee = query.getResultList();
-
-            return employee;
+        } catch (NoResultException e) {
+            return null;
         }
     }
 

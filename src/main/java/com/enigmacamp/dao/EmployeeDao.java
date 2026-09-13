@@ -14,8 +14,6 @@ public interface EmployeeDao {
 
     Employee findByName(String name);
 
-    List<Employee> findByDepartment(String department);
-
     Employee findByEmail(String email);
 
     Employee update(Employee employee);
