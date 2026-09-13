@@ -8,7 +8,6 @@ import com.enigmacamp.service.EmployeeService;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,7 +44,7 @@ public class AttendanceController {
                 case 5 -> deleteHandler();
                 case 6 -> countLateEmployee();
                 case 7 -> countNeverAttended();
-                case 8 -> totalWorkingHoursPerDay();
+                case 8 -> totalWorkingHours();
                 case 9 -> mostDiligentEmployee();
                 case 0 -> {
                     System.out.println("Bye...");
@@ -199,30 +198,18 @@ public class AttendanceController {
         System.out.println("Employees Who Never Attended : " + totalNeverAttended);
     }
 
-    private void totalWorkingHoursPerDay() {
+    private void totalWorkingHours() {
         List<Attendance> allAttendance = attendanceService.getAll();
 
-        allAttendance.stream().collect(Collectors.groupingBy(Attendance::getDate,
-                Collectors.groupingBy(attendance -> attendance.getEmployee().getFullname(), Collectors.summingDouble(att -> {
-                    long minutes = Duration.between(
-                            att.getCheckIn(), att.getCheckOut()
-                    ).toMinutes();
+        System.out.println("----------------------------------");
+        System.out.println("ID |    Employee    | Working Hour");
+        System.out.println("----------------------------------");
 
-                    return minutes / 60.0;
-                })))).forEach((date, nameMap) -> {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.ENGLISH);
-                String output = date.format(formatter);
-                int id = 1;
-                System.out.println("----------------------------------");
-                System.out.println("\t\t" + output);
-                System.out.println("----------------------------------");
-                System.out.println("ID |    Employee    | Working Hour");
-                System.out.println("----------------------------------");
-
-                for (Map.Entry<String, Double> data : nameMap.entrySet()) {
-                    System.out.printf("%d  |  %s  |    %.1f \n", id, data.getKey(), data.getValue());
-                    id++;
-                }
+        allAttendance.stream().collect(Collectors.groupingBy(Attendance::getEmployee, Collectors.summingDouble(attendance -> {
+            long minutes = Duration.between(attendance.getCheckIn(), attendance.getCheckOut()).toMinutes();
+            return minutes / 60.0;
+        }))).entrySet().stream().sorted(Comparator.comparingLong(map -> map.getKey().getId())).forEach((map) -> {
+            System.out.printf("%d  |  %s  |    %.1f \n", map.getKey().getId(), map.getKey().getFullname(), map.getValue());
         });
     }
 
