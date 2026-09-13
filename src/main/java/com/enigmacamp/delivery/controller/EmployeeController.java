@@ -42,19 +42,23 @@ public class EmployeeController {
     }
 
     private void createHandler() {
-        System.out.println("========== FORM EMPLOYEE ==========");
-        System.out.print("Name: ");
-        String name = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Address: ");
-        String address = scanner.nextLine();
-        System.out.print("Department Id : ");
-        Long id = Long.valueOf(scanner.nextLine());
-
-        Department department = new Department(id);
-        var payload = new Employee(name, email, address, department);
         try {
+            System.out.println("========== FORM EMPLOYEE ==========");
+            System.out.print("Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Email: ");
+            String email = scanner.nextLine();
+
+            System.out.print("Address: ");
+            String address = scanner.nextLine();
+
+            System.out.print("Department Id : ");
+            Long id = Long.valueOf(scanner.nextLine());
+
+            Department department = new Department(id);
+            var payload = new Employee(name, email, address, department);
+
             Employee employee = employeeService.create(payload);
             System.out.println("Employee created successfully!");
             System.out.println("Employee ID: " + employee.getId());
@@ -71,6 +75,10 @@ public class EmployeeController {
         System.out.println("ID |   Full Name   |       Email        | Department");
         System.out.println("----------------------------------------------------");
 
+        if (employees.isEmpty()) {
+            System.out.println("\t\t\t DATA IS EMPTY");
+        }
+
         for (Employee employee : employees) {
             System.out.printf(
                     "%d  |  %s |  %s  |    %s", employee.getId(),
@@ -81,42 +89,51 @@ public class EmployeeController {
     }
 
     private void getByIdHandler() {
-        System.out.print("Id : ");
-        Long id = Long.valueOf(scanner.nextLine());
-        employeeService.getById(id).ifPresentOrElse(employee -> System.out.println(
-                        "Employee ID : " + employee.getId() +
-                        "\nFull Name : " + employee.getFullname() +
-                        "\nEmail  : " + employee.getEmail() +
-                        "\nAddress : " + employee.getAddress() +
-                        "\nDepartment : " + employee.getDepartment().getName()),
-                () -> {
-                    System.out.println(
-                            "Employee with ID "
-                                    + id
-                                    + " not found."
-                    );
-                }
-        );
+        try {
+            System.out.print("Id : ");
+            Long id = Long.valueOf(scanner.nextLine());
+            employeeService.getById(id).ifPresentOrElse(employee -> System.out.println(
+                            "Employee ID : " + employee.getId() +
+                            "\nFull Name : " + employee.getFullname() +
+                            "\nEmail  : " + employee.getEmail() +
+                            "\nAddress : " + employee.getAddress() +
+                            "\nDepartment : " + employee.getDepartment().getName()),
+                    () -> {
+                        System.out.println(
+                                "Employee with ID "
+                                        + id
+                                        + " not found."
+                        );
+                    }
+            );
+        }catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
+        }
     }
 
     private void updateHandler() {
-        System.out.print("Id: ");
-        Long id = Long.valueOf(scanner.nextLine());
-        System.out.print("Name: ");
-        String name = scanner.nextLine();
-        System.out.print("Email: ");
-        String email = scanner.nextLine();
-        System.out.print("Address: ");
-        String address = scanner.nextLine();
-        System.out.print("Department Id : ");
-        Long idDepartment = Long.valueOf(scanner.nextLine());
-
-        Department department = new Department(idDepartment);
-
-        Employee employee = new Employee(id, name, email, address, department);
 
         try {
+            System.out.print("Id: ");
+            Long id = Long.valueOf(scanner.nextLine());
+
+            System.out.print("Name: ");
+            String name = scanner.nextLine();
+
+            System.out.print("Email: ");
+            String email = scanner.nextLine();
+
+            System.out.print("Address: ");
+            String address = scanner.nextLine();
+
+            System.out.print("Department Id : ");
+            Long idDepartment = Long.valueOf(scanner.nextLine());
+
+            Department department = new Department(idDepartment);
+
+            Employee employee = new Employee(id, name, email, address, department);
             Employee updatedEmployee = employeeService.update(employee);
+
             System.out.println("Employee is Succesfully Update");
             System.out.println(
                     "Employee ID : " + updatedEmployee.getId() +
@@ -124,15 +141,17 @@ public class EmployeeController {
                     "\nEmail  : " + updatedEmployee.getEmail() +
                     "\nAddress : " + updatedEmployee.getAddress() +
                     "\nDepartment : " + updatedEmployee.getDepartment().getName());
+
         } catch (IllegalArgumentException e) {
             System.out.println("Error : " + e.getMessage());
         }
     }
 
     private void deleteHandler() {
-        System.out.print("Id : ");
-        Long id = Long.valueOf(scanner.nextLine());
         try {
+            System.out.print("Id : ");
+            Long id = Long.valueOf(scanner.nextLine());
+
             employeeService.getById(id).ifPresentOrElse(
                     employee -> employeeService.delete(id),
                     () -> {

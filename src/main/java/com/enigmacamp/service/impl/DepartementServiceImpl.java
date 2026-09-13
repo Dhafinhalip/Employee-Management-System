@@ -19,7 +19,13 @@ public class DepartementServiceImpl implements DepartementService {
     public Department create(Department department) {
         validateDepartment(department);
 
-        return departementDao.save(department);
+        if (getByName(department.getName().toUpperCase()).isPresent()) {
+            throw new IllegalArgumentException(
+                    "Department name cannot be duplicate"
+            );
+        } else {
+            return departementDao.save(department);
+        }
 
     }
 
@@ -56,7 +62,7 @@ public class DepartementServiceImpl implements DepartementService {
     public Department update(Department department) {
         if (getById(department.getId()).isEmpty()) {
             throw new IllegalArgumentException(
-                    "Department with ID " + department.getId() + "Not Found"
+                    "Department with ID " + department.getId() + " Not Found"
             );
         }
 
@@ -99,12 +105,5 @@ public class DepartementServiceImpl implements DepartementService {
                     "Department name cannot be empty"
             );
         }
-
-        if (getByName(department.getName().toUpperCase()).isPresent()) {
-            throw new IllegalArgumentException(
-                    "Department name cannot be duplicate"
-            );
-        }
-
     }
 }

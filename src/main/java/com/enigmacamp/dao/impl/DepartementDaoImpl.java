@@ -6,6 +6,7 @@ import com.enigmacamp.entity.Attendance;
 import com.enigmacamp.entity.Department;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 
 
@@ -67,9 +68,7 @@ public class DepartementDaoImpl implements DepartementDao {
 
             query.setParameter("name", name);
 
-            Department department = query.getSingleResult();
-
-            return Optional.ofNullable(department);
+            return query.getResultStream().findFirst();
         }
     }
 

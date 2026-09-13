@@ -57,20 +57,25 @@ public class AttendanceController {
     }
 
     private void createHandler() {
-        System.out.println("========== FORM ATTENDANCE ==========");
-        System.out.print("Employee ID: ");
-        Long id = Long.valueOf(scanner.nextLine());
-        System.out.print("Date (YYYY-MM-DD): ");
-        LocalDate date = LocalDate.parse(scanner.nextLine());
-        System.out.print("Check In (HH::MM): ");
-        LocalTime checkIn = LocalTime.parse(scanner.nextLine());
-        System.out.print("Check Out (HH::MM): ");
-        LocalTime checkOut = LocalTime.parse(scanner.nextLine());
-
-        Employee employee = new Employee(id);
         try {
+            System.out.println("========== FORM ATTENDANCE ==========");
+
+            System.out.print("Employee ID: ");
+            Long id = Long.valueOf(scanner.nextLine());
+
+            System.out.print("Date (YYYY-MM-DD): ");
+            LocalDate date = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Check In (HH::MM): ");
+            LocalTime checkIn = LocalTime.parse(scanner.nextLine());
+
+            System.out.print("Check Out (HH::MM): ");
+            LocalTime checkOut = LocalTime.parse(scanner.nextLine());
+
+            Employee employee = new Employee(id);
             var payload = new Attendance(employee, date, checkIn, checkOut);
             Attendance attendance = attendanceService.create(payload);
+
             System.out.println("Attendance created successfully!");
             System.out.println("Attendance ID: " + attendance.getId());
         } catch (Exception e) {
@@ -85,6 +90,11 @@ public class AttendanceController {
         System.out.println("-----------------------------------------------------");
         System.out.println("ID |    Date    | Check In | Check Out |   Employee");
         System.out.println("-----------------------------------------------------");
+
+        if (attendances.isEmpty()) {
+            System.out.println("\t\t\t\t DATA IS EMPTY");
+        }
+
         for (Attendance attendance : attendances) {
             System.out.printf("%d  | %tF |   %tR  |   %tR   | %s",
                     attendance.getId(),
@@ -96,45 +106,53 @@ public class AttendanceController {
     }
 
     private void getByIdHandler() {
-        System.out.print("Id : ");
-        Long id = Long.valueOf(scanner.nextLine());
-        attendanceService.getById(id).ifPresentOrElse(
-                attendance ->  System.out.println(
-                        "ID : " + attendance.getId() +
-                        "Check In : " + attendance.getCheckIn() +
-                        "Check Out  : " + attendance.getCheckOut() +
-                        "Employee  : " + attendance.getEmployee().getFullname()),
-                () -> {
-                    System.out.println(
-                            "Employee with ID "
-                                    + id
-                                    + " not found."
-                    );
-                }
-        );
+        try {
+            System.out.print("Id : ");
+            Long id = Long.valueOf(scanner.nextLine());
+
+            attendanceService.getById(id).ifPresentOrElse(
+                    attendance ->  System.out.println(
+                            "ID : " + attendance.getId() +
+                            "Check In : " + attendance.getCheckIn() +
+                            "Check Out  : " + attendance.getCheckOut() +
+                            "Employee  : " + attendance.getEmployee().getFullname()),
+                    () -> {
+                        System.out.println(
+                                "Employee with ID "
+                                        + id
+                                        + " not found."
+                        );
+                    }
+            );
+        } catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
+        }
     }
 
     private void updateHandler() {
-        System.out.print("ID: ");
-        Long id = Long.valueOf(scanner.nextLine());
-        System.out.print("Date (YYYY-MM-DD): ");
-        LocalDate date = LocalDate.parse(scanner.nextLine());
-        System.out.print("Check In (HH::MM): ");
-        LocalTime checkIn = LocalTime.parse(scanner.nextLine());
-        System.out.print("Check Out(HH::MM): ");
-        LocalTime checkOut = LocalTime.parse(scanner.nextLine());
-        System.out.print("Employee ID: ");
-        Long idEmployee = Long.valueOf(scanner.nextLine());
-
-        Employee employee = new Employee(idEmployee);
-        Attendance attendance = new Attendance(id, date, checkIn, checkOut, employee);
-
         try {
-            Attendance updatedEmployee =
-                    attendanceService.update(attendance);
+            System.out.print("ID: ");
+            Long id = Long.valueOf(scanner.nextLine());
+
+            System.out.print("Date (YYYY-MM-DD): ");
+            LocalDate date = LocalDate.parse(scanner.nextLine());
+
+            System.out.print("Check In (HH::MM): ");
+            LocalTime checkIn = LocalTime.parse(scanner.nextLine());
+
+            System.out.print("Check Out(HH::MM): ");
+            LocalTime checkOut = LocalTime.parse(scanner.nextLine());
+
+            System.out.print("Employee ID: ");
+            Long idEmployee = Long.valueOf(scanner.nextLine());
+
+            Employee employee = new Employee(idEmployee);
+            Attendance attendance = new Attendance(id, date, checkIn, checkOut, employee);
+
+            Attendance updatedAttendance = attendanceService.update(attendance);
 
             System.out.println("Attendance Successfully Update");
-            System.out.println(updatedEmployee);
+            System.out.println(updatedAttendance);
         }catch (IllegalArgumentException e) {
             System.out.println("Error : " + e.getMessage());
         }
@@ -173,8 +191,10 @@ public class AttendanceController {
         List<Attendance> allAttendance = attendanceService.getAll();
         List<Employee> allEmployee = employeeService.getAll();
 
-        long totalNeverAttended = allEmployee.stream().filter(employee -> allAttendance.stream().noneMatch(attendance ->
-                attendance.getEmployee().getId() == employee.getId())).count();
+        long totalNeverAttended = allEmployee.stream().filter(employee -> allAttendance.stream()
+                .noneMatch(attendance ->
+                attendance.getEmployee().getId() ==
+                employee.getId())).count();
 
         System.out.println("Employees Who Never Attended : " + totalNeverAttended);
     }

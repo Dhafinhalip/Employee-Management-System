@@ -45,7 +45,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     public Attendance update(Attendance attendance) {
         if (getById(attendance.getId()).isEmpty()) {
             throw new IllegalArgumentException(
-                    "Department with ID " + attendance.getId() + "Not Found"
+                    "Department with ID " + attendance.getId() + " Not Found"
             );
         }
 

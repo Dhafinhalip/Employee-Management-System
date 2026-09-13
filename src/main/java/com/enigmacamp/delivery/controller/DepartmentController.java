@@ -41,14 +41,15 @@ public class DepartmentController {
     }
 
     private void createHandler() {
-        System.out.println("========== FORM DEPARTMENT ==========");
-        System.out.print("Department Name: ");
-        String name = scanner.nextLine();
-
-        var payload = new Department(name.toUpperCase());
-
         try {
+            System.out.println("========== FORM DEPARTMENT ==========");
+
+            System.out.print("Department Name: ");
+            String name = scanner.nextLine();
+
+            var payload = new Department(name.toUpperCase());
             Department department =  departementService.create(payload);
+
             System.out.println("Departement created successfully!");
             System.out.println("Departement ID: " + department.getId());
         }catch (Exception e) {
@@ -63,53 +64,64 @@ public class DepartmentController {
         System.out.println("----------------------");
         System.out.println("ID | Department Name  ");
         System.out.println("----------------------");
+
+        if (departments.isEmpty()) {
+            System.out.println("\t DATA IS EMPTY");
+        }
+
         for (Department department : departments) {
-            System.out.printf("%d  | %s ", department.getId(),
-                    department.getName() + "\n");
+            System.out.printf("%d  | %s \n", department.getId(),
+                    department.getName());
         }
     }
 
     private void getByIdHandler() {
-        System.out.print("Id : ");
-        Long id = Long.valueOf(scanner.nextLine());
-        departementService.getById(id).ifPresentOrElse(
-                department -> System.out.println(
-                        "Department ID : " + department.getId() + "\n" +
-                        "Full Name : " + department.getName()),
-                () -> {
-                    System.out.println(
-                            "Department with ID "
-                                    + id
-                                    + " not found."
-                    );
-                }
-        );
+        try {
+            System.out.print("Id : ");
+            Long id = Long.valueOf(scanner.nextLine());
+
+            departementService.getById(id).ifPresentOrElse(
+                    department -> System.out.println(
+                            "Department ID : " + department.getId() + "\n" +
+                            "Department Name : " + department.getName()),
+                    () -> {
+                        System.out.println(
+                                "Department with ID "
+                                        + id
+                                        + " not found."
+                        );
+                    }
+            );
+        }catch (Exception e) {
+            System.out.println("Error : " + e.getMessage());
+        }
     }
 
     private void updateHandler() {
-        System.out.print("Id: ");
-        Long id = Long.valueOf(scanner.nextLine());
-        System.out.print("Department Name: ");
-        String name = scanner.nextLine();
-
-        Department department = new Department(id, name.toUpperCase());
-
         try {
+            System.out.print("Id: ");
+            Long id = Long.valueOf(scanner.nextLine());
+
+            System.out.print("Department Name: ");
+            String name = scanner.nextLine();
+
+            Department department = new Department(id, name.toUpperCase());
             Department updatedDepartment = departementService.update(department);
 
             System.out.println("Department Succesfully Update");
             System.out.println(
                     "Department ID : " + updatedDepartment.getId() + "\n" +
-                    "Full Name : " + updatedDepartment.getName());
+                    "Department Name : " + updatedDepartment.getName());
         } catch (IllegalArgumentException e) {
             System.out.println("Error : " + e.getMessage());
         }
     }
 
     private void deleteHandler() {
-        System.out.print("Id : ");
-        Long id = Long.valueOf(scanner.nextLine());
         try {
+            System.out.print("Id : ");
+            Long id = Long.valueOf(scanner.nextLine());
+
             departementService.getById(id).ifPresentOrElse(
                     employee -> departementService.delete(id),
                     () -> {
